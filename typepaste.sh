@@ -5,7 +5,8 @@
 ## @description  types out what's in your X Selection
 ## @license  Apache 2.0
 ## @usage  typepaste.sh
-## @requires  xdotool
+## @require  xdotool
+## @require  xclip
 #=======================================================================
 
 # give you some time to switch to the window you want

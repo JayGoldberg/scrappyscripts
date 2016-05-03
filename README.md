@@ -32,3 +32,7 @@ Implements a simple GUI popup to run commands (a la `gmrun`).
 - Also useful for web sites that fuck with paste functionality (password fields for example)
 
 ![animation of typepaste.sh](screenshots/typepaste.gif)
+
+## heifer.sh
+A launch wrapper that limits an application to settable memory and CPU limits 
+- Keeps an application from eating all memory and CPU (chrome)

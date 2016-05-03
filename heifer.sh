@@ -12,18 +12,27 @@
 
 cpulimit=${$1:-768} # 0-1024
 memlimit=${$2:-4096} # in MB
-process="${$3:-chrome$$}"
+processname="${$3:-heifer$$}"
 
 shift
 shift
 
 u=$(id -un)
 g=$(id -gn)
-sudo cgcreate -a "$u:$g" -t "$u:$g" -g cpu,memory:${process}
 
-echo $cpulimit > /sys/fs/cgroup/cpu/${process}/cpu.shares
-echo $(($memlimit*1024*1024)) > /sys/fs/cgroup/memory/${process}/memory.limit_in_bytes
-cgexec -g cpu,memory:${process} $@
+# create cgroup with -a (parameter owner) and -t (tasks file owner)
+# if not exists, create
+echo Opening sudo to create user-managed cgroup space
+sudo cgcreate -a "$u:$g" -t "$u:$g" -g cpu,memory:${processname}
+
+# can also use `cgset`
+echo Setting CPU limit...
+echo $cpulimit > /sys/fs/cgroup/cpu/${processname}/cpu.shares
+echo Setting memory limit...
+echo $(($memlimit*1024*1024)) > /sys/fs/cgroup/memory/${processname}/memory.limit_in_bytes
+
+echo Executing the target binary "${processname}" using bash
+cgexec -g cpu,memory:${processname} bash -c "$@"
 
 # delete the cgroup when script exits
-sudo cgdelete memory,cpu:${process}
+sudo cgdelete memory,cpu:${processname}
